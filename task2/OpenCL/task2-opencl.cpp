@@ -14,64 +14,64 @@ const char* kernel_code = R"(
 )";
 
 int main() {
-    // Размер массива
-    const int arraySize = 10;
+    // Р Р°Р·РјРµСЂ РјР°СЃСЃРёРІР°
+    const int arraySize = 100;
 
-    // Инициализация вектора чисел
+    // РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РІРµРєС‚РѕСЂР° С‡РёСЃРµР»
     std::vector<int> inputArray;
     for (int i = 0; i < arraySize; i++) {
         inputArray.push_back(rand() % 100);
     }
 
-    // Получение платформы OpenCL
+    // РџРѕР»СѓС‡РµРЅРёРµ РїР»Р°С‚С„РѕСЂРјС‹ OpenCL
     std::vector<cl::Platform> platforms;
     cl::Platform::get(&platforms);
     cl::Platform platform = platforms[0];
 
-    // Получение устройства OpenCL
+    // РџРѕР»СѓС‡РµРЅРёРµ СѓСЃС‚СЂРѕР№СЃС‚РІР° OpenCL
     std::vector<cl::Device> devices;
     platform.getDevices(CL_DEVICE_TYPE_GPU, &devices);
     cl::Device device = devices[0];
 
-    // Создание контекста OpenCL
+    // РЎРѕР·РґР°РЅРёРµ РєРѕРЅС‚РµРєСЃС‚Р° OpenCL
     cl::Context context(device);
 
-    // Создание очереди команд OpenCL
+    // РЎРѕР·РґР°РЅРёРµ РѕС‡РµСЂРµРґРё РєРѕРјР°РЅРґ OpenCL
     cl::CommandQueue queue(context, device);
 
-    // Создание буфера для входных и выходных данных
+    // РЎРѕР·РґР°РЅРёРµ Р±СѓС„РµСЂР° РґР»СЏ РІС…РѕРґРЅС‹С… Рё РІС‹С…РѕРґРЅС‹С… РґР°РЅРЅС‹С…
     cl::Buffer inputBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(int) * arraySize, inputArray.data());
     cl::Buffer result_buffer(context, CL_MEM_WRITE_ONLY, sizeof(int));
 
-    // Создание программы OpenCL
+    // РЎРѕР·РґР°РЅРёРµ РїСЂРѕРіСЂР°РјРјС‹ OpenCL
     cl::Program::Sources source(1, std::make_pair(kernel_code, strlen(kernel_code)));
     cl::Program program(context, kernel_code);
 
     program.build({ device });
 
-    // Создание ядра OpenCL
+    // РЎРѕР·РґР°РЅРёРµ СЏРґСЂР° OpenCL
     cl::Kernel kernel(program, "sum");
 
-    // Установка аргументов для ядра OpenCL
+    // РЈСЃС‚Р°РЅРѕРІРєР° Р°СЂРіСѓРјРµРЅС‚РѕРІ РґР»СЏ СЏРґСЂР° OpenCL
     kernel.setArg(0, inputBuffer);
     kernel.setArg(1, result_buffer);
     kernel.setArg(2, arraySize);
 
-    // Замер времени
+    // Р—Р°РјРµСЂ РІСЂРµРјРµРЅРё
     std::chrono::time_point<std::chrono::system_clock> start, end;
     start = std::chrono::system_clock::now();
 
-    // Выполнение ядра OpenCL
+    // Р’С‹РїРѕР»РЅРµРЅРёРµ СЏРґСЂР° OpenCL
     cl::Event event;
     queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(arraySize), cl::NullRange, nullptr, &event);
 
-    // Чтение результатов из буфера вывода
+    // Р§С‚РµРЅРёРµ СЂРµР·СѓР»СЊС‚Р°С‚РѕРІ РёР· Р±СѓС„РµСЂР° РІС‹РІРѕРґР°
     int result;
     queue.enqueueReadBuffer(result_buffer, CL_TRUE, 0, sizeof(int), &result);
 
     event.wait();
   
-    // Вывод результата
+    // Р’С‹РІРѕРґ СЂРµР·СѓР»СЊС‚Р°С‚Р°
     std::cout << "Size: " << arraySize << std::endl;
     std::cout << "Sum: " << result << std::endl;
 
