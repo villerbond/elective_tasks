@@ -10,26 +10,26 @@ int main(int argc, char* argv[]) {
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
 
-    int n = 10; // Размер массива
-    std::vector<int> numbers; // Инициализируем массив чисел
+    int n = 10000000; // Р Р°Р·РјРµСЂ РјР°СЃСЃРёРІР°
+    std::vector<int> numbers; // РРЅРёС†РёР°Р»РёР·РёСЂСѓРµРј РјР°СЃСЃРёРІ С‡РёСЃРµР»
 
     for (int i = 0; i < n; ++i) {
         numbers.push_back(i);
     }
 
-    for (int i = 0; i < n; ++i) {
-        std::cout << numbers[i] << " ";
-    }
-    std::cout << std::endl;
+    //for (int i = 0; i < n; ++i) {
+    //    std::cout << numbers[i] << " ";
+    //}
+    //std::cout << std::endl;
 
     double start_time = MPI_Wtime();
 
-    int local_sum = 0;
+    double local_sum = 0;
     for (int i = 0; i < n; ++i) {
         local_sum += numbers[i];
     }
 
-    int global_sum;
+    double global_sum;
     MPI_Reduce(&local_sum, &global_sum, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
 
     if (rank == 0) {
