@@ -1,7 +1,7 @@
 #include <CL/cl.hpp>
 #include <iostream>
 
-// Код программы на OpenCL
+// РљРѕРґ РїСЂРѕРіСЂР°РјРјС‹ РЅР° OpenCL
 const char* kernelSource = R"(
 __kernel void helloWorld(__global int* id) {
     int threadId = get_global_id(0);
@@ -10,7 +10,7 @@ __kernel void helloWorld(__global int* id) {
 )";
 
 int main() {
-    // Получаем список устройств OpenCL (в данном случае видеокарты AMD)
+    // РџРѕР»СѓС‡Р°РµРј СЃРїРёСЃРѕРє СѓСЃС‚СЂРѕР№СЃС‚РІ OpenCL (РІ РґР°РЅРЅРѕРј СЃР»СѓС‡Р°Рµ РІРёРґРµРѕРєР°СЂС‚С‹ AMD)
     std::vector<cl::Platform> platforms;
     cl::Platform::get(&platforms);
 
@@ -18,15 +18,15 @@ int main() {
     platforms[0].getDevices(CL_DEVICE_TYPE_GPU, &devices);
     cl::Device device = devices[0];
 
-    // Создаем контекст и очередь команд
+    // РЎРѕР·РґР°РµРј РєРѕРЅС‚РµРєСЃС‚ Рё РѕС‡РµСЂРµРґСЊ РєРѕРјР°РЅРґ
     cl::Context context(device);
     cl::CommandQueue queue(context, device);
 
-    // Создаем буфер данных
+    // РЎРѕР·РґР°РµРј Р±СѓС„РµСЂ РґР°РЅРЅС‹С…
     int numThreads = 10;
     cl::Buffer buffer(context, CL_MEM_WRITE_ONLY, sizeof(int) * numThreads);
 
-    // Компилируем и запускаем программу на OpenCL
+    // РљРѕРјРїРёР»РёСЂСѓРµРј Рё Р·Р°РїСѓСЃРєР°РµРј РїСЂРѕРіСЂР°РјРјСѓ РЅР° OpenCL
     cl::Program::Sources source(1, std::make_pair(kernelSource, strlen(kernelSource)));
     cl::Program program(context, source);
     program.build({ device });
@@ -36,7 +36,7 @@ int main() {
     queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(numThreads), cl::NullRange);
     queue.finish();
 
-    // Считываем данные обратно на CPU и выводим результат
+    // РЎС‡РёС‚С‹РІР°РµРј РґР°РЅРЅС‹Рµ РѕР±СЂР°С‚РЅРѕ РЅР° CPU Рё РІС‹РІРѕРґРёРј СЂРµР·СѓР»СЊС‚Р°С‚
     int* result = new int[numThreads];
     queue.enqueueReadBuffer(buffer, CL_TRUE, 0, sizeof(int) * numThreads, result);
     for (int i = 0; i < numThreads; i++) {
