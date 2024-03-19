@@ -1,4 +1,4 @@
-#include <iostream> 
+#include <iostream>
 #include <vector>
 #include <omp.h>
 #include <chrono>
@@ -14,8 +14,8 @@ int main() {
 
     std::vector<int> numbers;
 
-    // Çàïîëíåíèå ìàññèâà ÷èñëàìè
-    int n = 10000000; // Ðàçìåð ìàññèâà
+    // Заполнение массива числами
+    int n = 10000000; // Размер массива
     for (int i = 0; i < n; ++i) {
         numbers.push_back(rand() % 100);
     }
@@ -25,7 +25,7 @@ int main() {
     double sum = 0;
     auto start_time = std::chrono::high_resolution_clock::now();
 
-    // Ïîäñ÷åò ñóììû ñ èñïîëüçîâàíèåì OpenMP
+    // Подсчет суммы с использованием OpenMP
 #pragma omp parallel for reduction(+:sum)
     for (int i = 0; i < n; ++i) {
         sum += numbers[i];
