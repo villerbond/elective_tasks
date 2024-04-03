@@ -2,7 +2,7 @@
 #include <omp.h>
 #include <vector>
 
-// Пример функции f(x, y) = x^2 + y^2
+// РџСЂРёРјРµСЂ С„СѓРЅРєС†РёРё f(x, y) = x^2 + y^2
 double function(double x, double y) {
     return x * x + y * y;
 }
@@ -17,13 +17,13 @@ void print(std::vector<std::vector<double>> matrix, const int size) {
 }
 
 int main() {
-    const int size = 10; // размер сетки
-    double h = 0.01; // шаг сетки
+    const int size = 10; // СЂР°Р·РјРµСЂ СЃРµС‚РєРё
+    double h = 0.01; // С€Р°Рі СЃРµС‚РєРё
 
-    std::vector<std::vector<double>> A(size, std::vector<double>(size)); // исходный массив значений функции
-    std::vector<std::vector<double>> B(size, std::vector<double>(size)); // массив для производной
+    std::vector<std::vector<double>> A(size, std::vector<double>(size)); // РёСЃС…РѕРґРЅС‹Р№ РјР°СЃСЃРёРІ Р·РЅР°С‡РµРЅРёР№ С„СѓРЅРєС†РёРё
+    std::vector<std::vector<double>> B(size, std::vector<double>(size)); // РјР°СЃСЃРёРІ РґР»СЏ РїСЂРѕРёР·РІРѕРґРЅРѕР№
 
-    // Заполнение массива A
+    // Р—Р°РїРѕР»РЅРµРЅРёРµ РјР°СЃСЃРёРІР° A
     for (int i = 0; i < size; i++) {
         for (int j = 0; j < size; j++) {
             A[i][j] = function(i * h, j * h);
@@ -32,10 +32,10 @@ int main() {
 
     print(A, size);
 
-    // Замер времени начала работы
+    // Р—Р°РјРµСЂ РІСЂРµРјРµРЅРё РЅР°С‡Р°Р»Р° СЂР°Р±РѕС‚С‹
     double start_time = omp_get_wtime();
 
-    // Вычисление производной по переменной x с использованием OpenMP
+    // Р’С‹С‡РёСЃР»РµРЅРёРµ РїСЂРѕРёР·РІРѕРґРЅРѕР№ РїРѕ РїРµСЂРµРјРµРЅРЅРѕР№ x СЃ РёСЃРїРѕР»СЊР·РѕРІР°РЅРёРµРј OpenMP
 #pragma omp parallel for
     for (int i = 0; i < size - 1; i++) {
         for (int j = 0; j < size - 1; j++) {
@@ -46,17 +46,17 @@ int main() {
                 B[i][j] = (A[i][j] - A[i - 1][j]) / h;
             }
             else {
-                B[i][j] = (A[i + 1][j] - A[i - 1][j]) / (2 * h); // Центральная разностная схема для производной
+                B[i][j] = (A[i + 1][j] - A[i - 1][j]) / (2 * h); // Р¦РµРЅС‚СЂР°Р»СЊРЅР°СЏ СЂР°Р·РЅРѕСЃС‚РЅР°СЏ СЃС…РµРјР° РґР»СЏ РїСЂРѕРёР·РІРѕРґРЅРѕР№
             }
         }
     }
 
     print(B, size);
 
-    // Замер времени окончания работы
+    // Р—Р°РјРµСЂ РІСЂРµРјРµРЅРё РѕРєРѕРЅС‡Р°РЅРёСЏ СЂР°Р±РѕС‚С‹
     double end_time = omp_get_wtime();
 
-    // Вывод времени работы
+    // Р’С‹РІРѕРґ РІСЂРµРјРµРЅРё СЂР°Р±РѕС‚С‹
     std::cout << "Size: " << size << "x" << size << std::endl;
     std::cout << "Times: " << end_time - start_time << " seconds" << std::endl;
 
