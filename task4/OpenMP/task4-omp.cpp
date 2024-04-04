@@ -2,7 +2,7 @@
 #include <omp.h>
 #include <vector>
 
-// Функция для генерации матрицы случайными числами
+// Р¤СѓРЅРєС†РёСЏ РґР»СЏ РіРµРЅРµСЂР°С†РёРё РјР°С‚СЂРёС†С‹ СЃР»СѓС‡Р°Р№РЅС‹РјРё С‡РёСЃР»Р°РјРё
 std::vector<std::vector<int>> generateRandomMatrix(int rows, int cols) {
     std::vector<std::vector<int>> matrix(rows, std::vector<int>(cols));
 
@@ -15,7 +15,7 @@ std::vector<std::vector<int>> generateRandomMatrix(int rows, int cols) {
     return matrix;
 }
 
-// Функция умножения матриц
+// Р¤СѓРЅРєС†РёСЏ СѓРјРЅРѕР¶РµРЅРёСЏ РјР°С‚СЂРёС†
 std::vector<std::vector<int>> matrixMultiply(const std::vector<std::vector<int>>& a, const std::vector<std::vector<int>>& b) {
     int n = a.size();
     int m = a[0].size();
@@ -36,16 +36,16 @@ std::vector<std::vector<int>> matrixMultiply(const std::vector<std::vector<int>>
 }
 
 int main() {
-    const int size = 50; // Размер матрицы
-    std::vector<std::vector<int>> A = generateRandomMatrix(size, size); // Генерация случайной матрицы A
-    std::vector<std::vector<int>> B = generateRandomMatrix(size, size); // Генерация случайной матрицы B
+    const int size = 50; // Р Р°Р·РјРµСЂ РјР°С‚СЂРёС†С‹
+    std::vector<std::vector<int>> A = generateRandomMatrix(size, size); // Р“РµРЅРµСЂР°С†РёСЏ СЃР»СѓС‡Р°Р№РЅРѕР№ РјР°С‚СЂРёС†С‹ A
+    std::vector<std::vector<int>> B = generateRandomMatrix(size, size); // Р“РµРЅРµСЂР°С†РёСЏ СЃР»СѓС‡Р°Р№РЅРѕР№ РјР°С‚СЂРёС†С‹ B
 
-    // Засечение времени начала выполнения
+    // Р—Р°СЃРµС‡РµРЅРёРµ РІСЂРµРјРµРЅРё РЅР°С‡Р°Р»Р° РІС‹РїРѕР»РЅРµРЅРёСЏ
     double start_time = omp_get_wtime();
 
     std::vector<std::vector<int>> result = matrixMultiply(A, B);
 
-    // Засечение времени конца выполнения
+    // Р—Р°СЃРµС‡РµРЅРёРµ РІСЂРµРјРµРЅРё РєРѕРЅС†Р° РІС‹РїРѕР»РЅРµРЅРёСЏ
     double end_time = omp_get_wtime();
 
     std::cout << "Size: " << size << "x" << size << std::endl;
