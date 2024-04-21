@@ -3,7 +3,7 @@
 #include <mpi.h>
 #include <chrono>
 
-// Функция для генерации матрицы случайными числами
+// Р¤СѓРЅРєС†РёСЏ РґР»СЏ РіРµРЅРµСЂР°С†РёРё РјР°С‚СЂРёС†С‹ СЃР»СѓС‡Р°Р№РЅС‹РјРё С‡РёСЃР»Р°РјРё
 std::vector<std::vector<int>> generateRandomMatrix(int rows, int cols) {
     std::vector<std::vector<int>> matrix(rows, std::vector<int>(cols));
 
@@ -28,7 +28,7 @@ void print(std::vector<std::vector<int>> matrix, const int size) {
 
 int main(int argc, char** argv) {
 
-    // Статус отправки/получения
+    // РЎС‚Р°С‚СѓСЃ РѕС‚РїСЂР°РІРєРё/РїРѕР»СѓС‡РµРЅРёСЏ
     MPI_Status status;
 
     MPI_Init(&argc, &argv);
@@ -39,9 +39,9 @@ int main(int argc, char** argv) {
 
     int el_per_process, ind, i;
 
-    const int N = 10; // Размер матрицы NxN
-    std::vector<std::vector<int>> A = generateRandomMatrix(N, N); // Генерация случайной матрицы A
-    std::vector<std::vector<int>> B = generateRandomMatrix(N, N); // Генерация случайной матрицы B
+    const int N = 10; // Р Р°Р·РјРµСЂ РјР°С‚СЂРёС†С‹ NxN
+    std::vector<std::vector<int>> A = generateRandomMatrix(N, N); // Р“РµРЅРµСЂР°С†РёСЏ СЃР»СѓС‡Р°Р№РЅРѕР№ РјР°С‚СЂРёС†С‹ A
+    std::vector<std::vector<int>> B = generateRandomMatrix(N, N); // Р“РµРЅРµСЂР°С†РёСЏ СЃР»СѓС‡Р°Р№РЅРѕР№ РјР°С‚СЂРёС†С‹ B
 
     std::vector<std::vector<int>> C(N, std::vector<int>(N, 0));
 
@@ -53,7 +53,7 @@ int main(int argc, char** argv) {
         ind = el_per_process;
         int tmp;
 
-        // Раздача задач
+        // Р Р°Р·РґР°С‡Р° Р·Р°РґР°С‡
         if (size > 1) {
             for (i = 1; i < size - 1; ++i) {
                 MPI_Send(&ind, 1, MPI_INT, i, 1, MPI_COMM_WORLD);
@@ -71,7 +71,7 @@ int main(int argc, char** argv) {
         }
 
 
-        // Собираем результаты воедино
+        // РЎРѕР±РёСЂР°РµРј СЂРµР·СѓР»СЊС‚Р°С‚С‹ РІРѕРµРґРёРЅРѕ
 
         for (i = 1; i < size; i++) {
             MPI_Recv(&ind, 1, MPI_INT, i, 2, MPI_COMM_WORLD, &status);
@@ -91,7 +91,7 @@ int main(int argc, char** argv) {
         MPI_Recv(&A, el_per_process * N, MPI_DOUBLE, src, 1, MPI_COMM_WORLD, &status);
         MPI_Recv(&B, N * N, MPI_DOUBLE, src, 1, MPI_COMM_WORLD, &status);
 
-        // Умножение матриц
+        // РЈРјРЅРѕР¶РµРЅРёРµ РјР°С‚СЂРёС†
         for (i = 0; i < el_per_process; ++i) {
             for (int j = 0; j < N; ++j) {
                 for (int k = 0; k < N; ++k) {
