@@ -36,7 +36,7 @@ int main() {
     double start_time = omp_get_wtime();
 
     // Вычисление производной по переменной x с использованием OpenMP
-#pragma omp parallel for
+#pragma omp parallel for collapse(2)
     for (int i = 0; i < size - 1; i++) {
         for (int j = 0; j < size - 1; j++) {
             if (i == 0) {
