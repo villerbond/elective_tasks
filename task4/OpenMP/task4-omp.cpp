@@ -23,7 +23,7 @@ std::vector<std::vector<int>> matrixMultiply(const std::vector<std::vector<int>>
 
     std::vector<std::vector<int>> result(n, std::vector<int>(p, 0));
 
-#pragma omp parallel for
+#pragma omp parallel for collapse(3)
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < p; j++) {
             for (int k = 0; k < m; k++) {
