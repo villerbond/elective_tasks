@@ -13,7 +13,7 @@ int main(int argc, char* argv[]) {
     int world_rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
 
-    int N = 10000000;  // Размер массива по умолчанию
+    int N = 10000000;  // Р Р°Р·РјРµСЂ РјР°СЃСЃРёРІР° РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
     if (argc > 1) {
         N = std::atoi(argv[1]);
     }
@@ -31,13 +31,13 @@ int main(int argc, char* argv[]) {
 
     auto start = std::chrono::high_resolution_clock::now();
 
-    // Разделение данных между процессами
+    // Р Р°Р·РґРµР»РµРЅРёРµ РґР°РЅРЅС‹С… РјРµР¶РґСѓ РїСЂРѕС†РµСЃСЃР°РјРё
     MPI_Scatter(data.data(), local_N, MPI_INT, local_data.data(), local_N, MPI_INT, 0, MPI_COMM_WORLD);
 
-    // Локальное суммирование
+    // Р›РѕРєР°Р»СЊРЅРѕРµ СЃСѓРјРјРёСЂРѕРІР°РЅРёРµ
     int local_sum = std::accumulate(local_data.begin(), local_data.end(), 0);
 
-    // Сбор локальных сумм и суммирование
+    // РЎР±РѕСЂ Р»РѕРєР°Р»СЊРЅС‹С… СЃСѓРјРј Рё СЃСѓРјРјРёСЂРѕРІР°РЅРёРµ
     int global_sum = 0;
     MPI_Reduce(&local_sum, &global_sum, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
 
