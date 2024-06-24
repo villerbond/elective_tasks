@@ -3,7 +3,7 @@
 #include <vector>
 #include <chrono>
 
-// Функция для инициализации матрицы случайными значениями
+// Р¤СѓРЅРєС†РёСЏ РґР»СЏ РёРЅРёС†РёР°Р»РёР·Р°С†РёРё РјР°С‚СЂРёС†С‹ СЃР»СѓС‡Р°Р№РЅС‹РјРё Р·РЅР°С‡РµРЅРёСЏРјРё
 void fill_matrix(std::vector<double>& matrix, int N) {
     for (int i = 0; i < N * N; ++i) {
         matrix[i] = static_cast<double>(rand()) / RAND_MAX;
@@ -19,7 +19,7 @@ int main(int argc, char* argv[]) {
     int world_rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
 
-    int N = 500; // Размер матрицы по умолчанию
+    int N = 500; // Р Р°Р·РјРµСЂ РјР°С‚СЂРёС†С‹ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
     if (argc > 1) {
         N = std::atoi(argv[1]);
     }
@@ -39,13 +39,13 @@ int main(int argc, char* argv[]) {
 
     auto start = std::chrono::high_resolution_clock::now();
 
-    // Разделение матрицы A между процессами
+    // Р Р°Р·РґРµР»РµРЅРёРµ РјР°С‚СЂРёС†С‹ A РјРµР¶РґСѓ РїСЂРѕС†РµСЃСЃР°РјРё
     MPI_Scatter(A.data(), rows_per_proc * N, MPI_DOUBLE, local_A.data(), rows_per_proc * N, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
-    // Передача всей матрицы B каждому процессу
+    // РџРµСЂРµРґР°С‡Р° РІСЃРµР№ РјР°С‚СЂРёС†С‹ B РєР°Р¶РґРѕРјСѓ РїСЂРѕС†РµСЃСЃСѓ
     MPI_Bcast(B.data(), N * N, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
-    // Вычисление произведения локальных частей
+    // Р’С‹С‡РёСЃР»РµРЅРёРµ РїСЂРѕРёР·РІРµРґРµРЅРёСЏ Р»РѕРєР°Р»СЊРЅС‹С… С‡Р°СЃС‚РµР№
     for (int i = 0; i < rows_per_proc; ++i) {
         for (int j = 0; j < N; ++j) {
             local_C[i * N + j] = 0.0;
@@ -55,7 +55,7 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    // Сбор локальных частей результата в процессе 0
+    // РЎР±РѕСЂ Р»РѕРєР°Р»СЊРЅС‹С… С‡Р°СЃС‚РµР№ СЂРµР·СѓР»СЊС‚Р°С‚Р° РІ РїСЂРѕС†РµСЃСЃРµ 0
     MPI_Gather(local_C.data(), rows_per_proc * N, MPI_DOUBLE, C.data(), rows_per_proc * N, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
     auto end = std::chrono::high_resolution_clock::now();
@@ -64,7 +64,7 @@ int main(int argc, char* argv[]) {
 
     if (world_rank == 0) {
         std::cout << "Time: " << diff.count() << " seconds\n";
-        // Вывод части результата для проверки
+        // Р’С‹РІРѕРґ С‡Р°СЃС‚Рё СЂРµР·СѓР»СЊС‚Р°С‚Р° РґР»СЏ РїСЂРѕРІРµСЂРєРё
         //for (int i = 0; i < 10; ++i) {
         //    for (int j = 0; j < 10; ++j) {
         //        std::cout << C[i * N + j] << " ";
