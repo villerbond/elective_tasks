@@ -3,7 +3,7 @@
 #include <vector>
 #include <chrono>
 
-// Пример функции f(x, y) = x^2 + y^2
+// РџСЂРёРјРµСЂ С„СѓРЅРєС†РёРё f(x, y) = x^2 + y^2
 double function(double x, double y) {
     return x * x + y * y;
 }
@@ -16,7 +16,7 @@ int main(int argc, char* argv[]) {
     int world_rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
 
-    // Размеры массива
+    // Р Р°Р·РјРµСЂС‹ РјР°СЃСЃРёРІР°
     int width = 10000;
     int height = 10000;
     if (argc > 2) {
@@ -39,10 +39,10 @@ int main(int argc, char* argv[]) {
 
     auto start = std::chrono::high_resolution_clock::now();
 
-    // Разделение данных между процессами
+    // Р Р°Р·РґРµР»РµРЅРёРµ РґР°РЅРЅС‹С… РјРµР¶РґСѓ РїСЂРѕС†РµСЃСЃР°РјРё
     MPI_Scatter(A.data(), local_height * width, MPI_DOUBLE, local_A.data(), local_height * width, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
-    // Вычисление производной по x
+    // Р’С‹С‡РёСЃР»РµРЅРёРµ РїСЂРѕРёР·РІРѕРґРЅРѕР№ РїРѕ x
     std::vector<double> local_B(local_height * width);
     for (int j = 0; j < local_height; ++j) {
         for (int i = 1; i < width - 1; ++i) {
@@ -50,7 +50,7 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    // Собираем данные обратно
+    // РЎРѕР±РёСЂР°РµРј РґР°РЅРЅС‹Рµ РѕР±СЂР°С‚РЅРѕ
     std::vector<double> B;
     if (world_rank == 0) {
         B.resize(width * height);
@@ -62,7 +62,7 @@ int main(int argc, char* argv[]) {
 
     if (world_rank == 0) {
         std::cout << "Time: " << diff.count() << " seconds\n";
-        // Вывод части результата для проверки
+        // Р’С‹РІРѕРґ С‡Р°СЃС‚Рё СЂРµР·СѓР»СЊС‚Р°С‚Р° РґР»СЏ РїСЂРѕРІРµСЂРєРё
         for (int j = 0; j < 10; ++j) {
             for (int i = 0; i < 10; ++i) {
                 std::cout << B[j * width + i] << " ";

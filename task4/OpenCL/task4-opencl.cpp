@@ -17,21 +17,21 @@ const char* kernel_code = R"(
 )";
 
 int main() {
-    // Размер матриц (N x N)
+    // Р Р°Р·РјРµСЂ РјР°С‚СЂРёС† (N x N)
     int N = 1000;
 
-    // Инициализация данных
+    // РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РґР°РЅРЅС‹С…
     std::vector<float> A(N * N);
     std::vector<float> B(N * N);
     std::vector<float> C(N * N);
 
-    // Заполнение матриц A и B случайными значениями
+    // Р—Р°РїРѕР»РЅРµРЅРёРµ РјР°С‚СЂРёС† A Рё B СЃР»СѓС‡Р°Р№РЅС‹РјРё Р·РЅР°С‡РµРЅРёСЏРјРё
     for (int i = 0; i < N * N; ++i) {
         A[i] = static_cast<float>(rand()) / RAND_MAX;
         B[i] = static_cast<float>(rand()) / RAND_MAX;
     }
 
-    // Получение платформ и устройств
+    // РџРѕР»СѓС‡РµРЅРёРµ РїР»Р°С‚С„РѕСЂРј Рё СѓСЃС‚СЂРѕР№СЃС‚РІ
     std::vector<cl::Platform> platforms;
     cl::Platform::get(&platforms);
     cl::Platform platform = platforms.front();
@@ -40,28 +40,28 @@ int main() {
     platform.getDevices(CL_DEVICE_TYPE_GPU, &devices);
     cl::Device device = devices.front();
 
-    // Создание контекста и очереди команд
+    // РЎРѕР·РґР°РЅРёРµ РєРѕРЅС‚РµРєСЃС‚Р° Рё РѕС‡РµСЂРµРґРё РєРѕРјР°РЅРґ
     cl::Context context(device);
     cl::CommandQueue queue(context, device);
 
-    // Создание программы и ядра
+    // РЎРѕР·РґР°РЅРёРµ РїСЂРѕРіСЂР°РјРјС‹ Рё СЏРґСЂР°
     cl::Program::Sources source(1, std::make_pair(kernel_code, strlen(kernel_code)));
     cl::Program program(context, kernel_code);
     program.build({ device });
     cl::Kernel kernel(program, "matrix_mult");
 
-    // Создание буферов
+    // РЎРѕР·РґР°РЅРёРµ Р±СѓС„РµСЂРѕРІ
     cl::Buffer bufferA(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(float) * A.size(), A.data());
     cl::Buffer bufferB(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(float) * B.size(), B.data());
     cl::Buffer bufferC(context, CL_MEM_WRITE_ONLY, sizeof(float) * C.size());
 
-    // Установка аргументов ядра
+    // РЈСЃС‚Р°РЅРѕРІРєР° Р°СЂРіСѓРјРµРЅС‚РѕРІ СЏРґСЂР°
     kernel.setArg(0, bufferA);
     kernel.setArg(1, bufferB);
     kernel.setArg(2, bufferC);
     kernel.setArg(3, N);
 
-    // Запуск ядра
+    // Р—Р°РїСѓСЃРє СЏРґСЂР°
     cl::NDRange global(N, N);
     auto start = std::chrono::high_resolution_clock::now();
     queue.enqueueNDRangeKernel(kernel, cl::NullRange, global, cl::NullRange);
@@ -69,12 +69,12 @@ int main() {
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> diff = end - start;
 
-    // Копирование результата обратно
+    // РљРѕРїРёСЂРѕРІР°РЅРёРµ СЂРµР·СѓР»СЊС‚Р°С‚Р° РѕР±СЂР°С‚РЅРѕ
     queue.enqueueReadBuffer(bufferC, CL_TRUE, 0, sizeof(float) * C.size(), C.data());
 
     std::cout << "Time: " << diff.count() << " seconds\n";
 
-    // Вывод части результата для проверки
+    // Р’С‹РІРѕРґ С‡Р°СЃС‚Рё СЂРµР·СѓР»СЊС‚Р°С‚Р° РґР»СЏ РїСЂРѕРІРµСЂРєРё
 
     //for (int i = 0; i < 10; ++i) {
     //    for (int j = 0; j < 10; ++j) {
