@@ -12,34 +12,34 @@ const char* kernel_code = R"(
             B[j * width + i] = (A[j * width + (i + 1)] - A[j * width + (i - 1)]) / 2.0f;
         }
         else {
-            B[j * width + i] = 0.0f; // Границы
+            B[j * width + i] = 0.0f; // Р“СЂР°РЅРёС†С‹
         }
     }
 )";
 
-// Пример функции f(x, y) = x^2 + y^2
+// РџСЂРёРјРµСЂ С„СѓРЅРєС†РёРё f(x, y) = x^2 + y^2
 double function(double x, double y) {
     return x * x + y * y;
 }
 
 int main() {
 
-    // Размеры массива
+    // Р Р°Р·РјРµСЂС‹ РјР°СЃСЃРёРІР°
     int width = 10000;
     int height = 10000;
 
-    // Инициализация данных
+    // РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РґР°РЅРЅС‹С…
     std::vector<float> A(width * height);
     std::vector<float> B(width * height);
 
-    // Заполнение массива A значениями функции f(i, j)
+    // Р—Р°РїРѕР»РЅРµРЅРёРµ РјР°СЃСЃРёРІР° A Р·РЅР°С‡РµРЅРёСЏРјРё С„СѓРЅРєС†РёРё f(i, j)
     for (int j = 0; j < height; ++j) {
         for (int i = 0; i < width; ++i) {
             A[j * width + i] = function(i, j);
         }
     }
 
-    // Получение платформ и устройств
+    // РџРѕР»СѓС‡РµРЅРёРµ РїР»Р°С‚С„РѕСЂРј Рё СѓСЃС‚СЂРѕР№СЃС‚РІ
     std::vector<cl::Platform> platforms;
     cl::Platform::get(&platforms);
     cl::Platform platform = platforms.front();
@@ -48,27 +48,27 @@ int main() {
     platform.getDevices(CL_DEVICE_TYPE_GPU, &devices);
     cl::Device device = devices.front();
 
-    // Создание контекста и очереди команд
+    // РЎРѕР·РґР°РЅРёРµ РєРѕРЅС‚РµРєСЃС‚Р° Рё РѕС‡РµСЂРµРґРё РєРѕРјР°РЅРґ
     cl::Context context(device);
     cl::CommandQueue queue(context, device);
 
-    // Создание программы и ядра
+    // РЎРѕР·РґР°РЅРёРµ РїСЂРѕРіСЂР°РјРјС‹ Рё СЏРґСЂР°
     cl::Program::Sources source(1, std::make_pair(kernel_code, strlen(kernel_code)));
     cl::Program program(context, kernel_code);
     program.build({ device });
     cl::Kernel kernel(program, "compute_derivative_x");
 
-    // Создание буферов
+    // РЎРѕР·РґР°РЅРёРµ Р±СѓС„РµСЂРѕРІ
     cl::Buffer bufferA(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(float) * A.size(), A.data());
     cl::Buffer bufferB(context, CL_MEM_WRITE_ONLY, sizeof(float) * B.size());
 
-    // Установка аргументов ядра
+    // РЈСЃС‚Р°РЅРѕРІРєР° Р°СЂРіСѓРјРµРЅС‚РѕРІ СЏРґСЂР°
     kernel.setArg(0, bufferA);
     kernel.setArg(1, bufferB);
     kernel.setArg(2, width);
     kernel.setArg(3, height);
 
-    // Запуск ядра
+    // Р—Р°РїСѓСЃРє СЏРґСЂР°
     cl::NDRange global(width, height);
     auto start = std::chrono::high_resolution_clock::now();
     queue.enqueueNDRangeKernel(kernel, cl::NullRange, global, cl::NullRange);
@@ -76,12 +76,12 @@ int main() {
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> diff = end - start;
 
-    // Копирование результата обратно
+    // РљРѕРїРёСЂРѕРІР°РЅРёРµ СЂРµР·СѓР»СЊС‚Р°С‚Р° РѕР±СЂР°С‚РЅРѕ
     queue.enqueueReadBuffer(bufferB, CL_TRUE, 0, sizeof(float) * B.size(), B.data());
 
     std::cout << "Time: " << diff.count() << " seconds\n";
 
-    // Вывод части результата для проверки
+    // Р’С‹РІРѕРґ С‡Р°СЃС‚Рё СЂРµР·СѓР»СЊС‚Р°С‚Р° РґР»СЏ РїСЂРѕРІРµСЂРєРё
     for (int j = 0; j < 10; ++j) {
         for (int i = 0; i < 10; ++i) {
             std::cout << B[j * width + i] << " ";
