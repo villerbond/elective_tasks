@@ -1,46 +1,54 @@
+#include <mpi.h>
 #include <iostream>
 #include <vector>
-#include <ctime>
-#include "mpi.h"
+#include <numeric>
+#include <chrono>
 
 int main(int argc, char* argv[]) {
     MPI_Init(&argc, &argv);
 
-    int rank, size;
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    MPI_Comm_size(MPI_COMM_WORLD, &size);
+    int world_size;
+    MPI_Comm_size(MPI_COMM_WORLD, &world_size);
 
-    int n = 10000000; // Р Р°Р·РјРµСЂ РјР°СЃСЃРёРІР°
-    std::vector<int> numbers; // РРЅРёС†РёР°Р»РёР·РёСЂСѓРµРј РјР°СЃСЃРёРІ С‡РёСЃРµР»
+    int world_rank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
 
-    for (int i = 0; i < n; ++i) {
-        numbers.push_back(i);
+    int N = 10000000;  // Размер массива по умолчанию
+    if (argc > 1) {
+        N = std::atoi(argv[1]);
     }
 
-    //for (int i = 0; i < n; ++i) {
-    //    std::cout << numbers[i] << " ";
-    //}
-    //std::cout << std::endl;
-
-    double start_time = MPI_Wtime();
-
-    double local_sum = 0;
-    for (int i = 0; i < n; ++i) {
-        local_sum += numbers[i];
+    std::vector<int> data;
+    if (world_rank == 0) {
+        data.resize(N);
+        for (int i = 0; i < N; ++i) {
+            data[i] = i;
+        }
     }
 
-    double global_sum;
+    int local_N = N / world_size;
+    std::vector<int> local_data(local_N);
+
+    auto start = std::chrono::high_resolution_clock::now();
+
+    // Разделение данных между процессами
+    MPI_Scatter(data.data(), local_N, MPI_INT, local_data.data(), local_N, MPI_INT, 0, MPI_COMM_WORLD);
+
+    // Локальное суммирование
+    int local_sum = std::accumulate(local_data.begin(), local_data.end(), 0);
+
+    // Сбор локальных сумм и суммирование
+    int global_sum = 0;
     MPI_Reduce(&local_sum, &global_sum, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
 
-    if (rank == 0) {
-        double end_time = MPI_Wtime();
-        
-        std::cout << "Size: " << n << std::endl;
-        std::cout << "Sum: " << global_sum << std::endl;
-        std::cout << "Time: " << end_time - start_time << " seconds" << std::endl;
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> diff = end - start;
+
+    if (world_rank == 0) {
+        std::cout << "Sum: " << global_sum << "\n";
+        std::cout << "Time: " << diff.count() << " seconds\n";
     }
 
     MPI_Finalize();
-
     return 0;
 }
